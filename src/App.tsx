@@ -9,21 +9,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import React from 'react';
 
 const queryClient = new QueryClient();
 
 function UserList() {
   const { data: users, isLoading: usersLoading, error: usersError } = useUsers();
   const { data: userCount, isLoading: countLoading } = useUserCount();
-  const { mutate: fetchMore, isLoading: isFetching } = useFetchMoreUsers();
+  const { mutate: fetchMore, isPending } = useFetchMoreUsers();
 
   if (usersLoading) return <div>Loading...</div>;
   if (usersError) return <div>Error loading users</div>;
 
   return (
     <Card className="w-full relative">
-      {isFetching && (
+      {isPending && (
         <div className="absolute top-0 left-0 right-0 bg-primary/10 text-primary py-2 text-center text-sm font-medium">
           Adding users...
         </div>
@@ -33,10 +32,10 @@ function UserList() {
           <CardTitle>Users</CardTitle>
           <button
             onClick={() => fetchMore()}
-            disabled={isFetching}
+            disabled={isPending}
             className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
-            {isFetching ? 'Adding Users...' : 'Add Users'}
+            {isPending ? 'Adding Users...' : 'Add Users'}
           </button>
         </div>
         <div className="text-sm text-gray-500">

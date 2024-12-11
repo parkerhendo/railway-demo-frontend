@@ -19,7 +19,7 @@ export function useUsers() {
 }
 
 export function useUserCount() {
-  return useQuery<{ count: number }>({
+  return useQuery<{ total: number }>({
     queryKey: ['user-count'],
     queryFn: async () => {
       const { data } = await axios.get('https://hn-api-write-to-postgres-production.up.railway.app/api/user-count');
