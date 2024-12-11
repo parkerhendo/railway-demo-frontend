@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from './components/ui/button';
 
 const queryClient = new QueryClient();
 
@@ -22,22 +23,16 @@ function UserList() {
 
   return (
     <Card className="w-full relative">
-      {isPending && (
-        <div className="absolute top-0 left-0 right-0 bg-primary/10 text-primary py-2 text-center text-sm font-medium">
-          Adding users...
-        </div>
-      )}
       <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex items-center gap-4">
           <CardTitle>Users</CardTitle>
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => fetchMore()}
             disabled={isPending}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
-            {isPending ? 'Adding Users...' : 'Add Users'}
-          </button>
-        </div>
+            {isPending ? 'Adding more users...' : 'Add Users'}
+          </Button>
         <div className="text-sm text-gray-500">
           Total Users: {countLoading ? "Loading..." : userCount?.total || 0}
         </div>
@@ -67,7 +62,7 @@ function UserList() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="container mx-auto p-10 flex items-center justify-center">
+      <div className="mx-auto p-10 flex items-center justify-center bg-gray-50">
         <UserList />
       </div>
     </QueryClientProvider>
