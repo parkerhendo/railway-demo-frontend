@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUsers } from './hooks/fetchUsers';
+import { useUsers, useUserCount, useFetchMoreUsers } from './hooks/fetchUsers';
 import {
   Table,
   TableBody,
@@ -14,40 +14,34 @@ import React from 'react';
 const queryClient = new QueryClient();
 
 function UserList() {
-  const { data: users, isLoading, error } = useUsers();
- 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading users</div>;
+  const { data: users, isLoading: usersLoading, error: usersError } = useUsers();
+  const { data: userCount, isLoading: countLoading } = useUserCount();
+  const { mutate: fetchMore, isLoading: isFetching } = useFetchMoreUsers();
 
-  // Add mock data for testing
-  const mockUsers = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com", 
-      phone: "(555) 123-4567",
-      company: "Acme Corp"
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "(555) 987-6543", 
-      company: "TechCo Inc"
-    },
-    {
-      id: 3,
-      name: "Bob Wilson",
-      email: "bob@example.com",
-      phone: "(555) 246-8135",
-      company: "Global Systems"
-    }
-  ];
+  if (usersLoading) return <div>Loading...</div>;
+  if (usersError) return <div>Error loading users</div>;
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Users</CardTitle>
+    <Card className="w-full relative">
+      {isFetching && (
+        <div className="absolute top-0 left-0 right-0 bg-primary/10 text-primary py-2 text-center text-sm font-medium">
+          Adding users...
+        </div>
+      )}
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-4">
+          <CardTitle>Users</CardTitle>
+          <button
+            onClick={() => fetchMore()}
+            disabled={isFetching}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+          >
+            {isFetching ? 'Adding Users...' : 'Add Users'}
+          </button>
+        </div>
+        <div className="text-sm text-gray-500">
+          Total Users: {countLoading ? "Loading..." : userCount?.total || 0}
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
