@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUsers, useUserCount, useFetchMoreUsers } from './hooks/fetchUsers';
+import { useUsers, useUserCount, useFetchMoreUsers, useTriggerFailure } from './hooks/fetchUsers';
 import {
   Table,
   TableBody,
@@ -17,6 +17,7 @@ function UserList() {
   const { data: users, isLoading: usersLoading, error: usersError } = useUsers();
   const { data: userCount, isLoading: countLoading } = useUserCount();
   const { mutate: fetchMore, isPending } = useFetchMoreUsers();
+  const { mutate: triggerFailure } = useTriggerFailure();
 
   if (usersLoading) return <div>Loading...</div>;
   if (usersError) return <div>Error loading users</div>;
@@ -25,14 +26,23 @@ function UserList() {
     <Card className="w-full relative">
       <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Users</CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fetchMore()}
-            disabled={isPending}
-          >
-            {isPending ? 'Adding more users...' : 'Add Users'}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => triggerFailure()}
+            >
+              Trigger failed call
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchMore()}
+              disabled={isPending}
+            >
+              {isPending ? 'Adding more users...' : 'Add Users'}
+            </Button>
+          </div>
         <div className="text-sm text-gray-500">
           Total Users: {countLoading ? "Loading..." : userCount?.total || 0}
         </div>

@@ -42,4 +42,13 @@ export function useFetchMoreUsers() {
       queryClient.invalidateQueries({ queryKey: ['user-count'] });
     },
   });
+}
+
+export function useTriggerFailure() {
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.get('https://hn-api-write-to-postgres-production.up.railway.app/api/trigger-failure');
+      return data;
+    },
+  });
 } 
